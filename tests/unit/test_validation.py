@@ -79,3 +79,27 @@ def test_other_records(table, field, value, match):
 def test_future_timestamp():
     with pytest.raises(ValueError, match="Future"):
         timestamp(datetime(2999, 1, 1, tzinfo=timezone.utc))
+
+
+def test_extra_fields_and_non_json_properties():
+    data = generate(days=1)
+    data["events"][0]["unexpected"] = "field"
+    _, errors = validate_bundle(data)
+    assert any("schema fields" in r["reason"] for r in errors)
+    data = generate(days=1)
+    data["events"][0]["properties"] = {"bad": float("nan")}
+    _, errors = validate_bundle(data)
+    assert any(r["table_name"] == "events" for r in errors)
+
+
+def test_error_references_and_activation_order():
+    data = generate(days=3)
+    data["errors"].append(dict(id="bad-error", request_id="unknown", error_type="Timeout"))
+    _, errors = validate_bundle(data)
+    assert any("failing request" in r["reason"] for r in errors)
+    data = generate(days=3)
+    for event in data["events"]:
+        if event["name"] == "dashboard":
+            event["name"] = "search"
+    _, errors = validate_bundle(data)
+    assert any("before dashboard" in r["reason"] for r in errors)

@@ -65,3 +65,12 @@ def test_incident_detection_and_evidence(url):
     assert not investigation["errors"].empty
     with pytest.raises(ValueError):
         investigate(data, "2025-03-02", 0)
+
+
+def test_replacement_removes_old_scenario_rows(url):
+    ingest(generate(days=5), url)
+    replacement = generate(seed=7, days=2)
+    ingest(replacement, url, replace=True)
+    with sessions(url)() as db:
+        assert db.scalar(select(func.count()).select_from(Event)) == len(replacement["events"])
+        assert db.scalar(select(func.count()).select_from(Run)) == 2

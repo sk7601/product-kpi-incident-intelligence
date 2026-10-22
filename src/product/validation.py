@@ -1,5 +1,6 @@
 """Strict raw-record validation with rejection evidence and reference checks."""
 
+import json
 import math
 from datetime import datetime
 
@@ -85,6 +86,7 @@ def validate_bundle(data: dict) -> tuple[dict, list[dict]]:
                     row["properties"] = {} if row.get("properties") is None else row["properties"]
                     if not isinstance(row["properties"], dict):
                         raise ValueError("Properties must be an object")
+                    json.dumps(row["properties"], allow_nan=False)
                     previous = state.setdefault(row["session_id"], set())
                     if row["name"] in FEATURES + ["activate"] and "login" not in previous:
                         raise ValueError("Feature before login")
