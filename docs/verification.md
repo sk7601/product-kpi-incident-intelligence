@@ -1,5 +1,8 @@
 # Verification evidence — 2026-10-22
 
+- Published code CI [39723593324](https://github.com/sk7601/product-kpi-incident-intelligence/actions/runs/39723593324)
+  passed: **48 tests, 98.36% core coverage**, three PostgreSQL integration cases,
+  migration upgrade/downgrade and Docker Compose build/start/application health smoke.
 - Windows, Python 3.13.5; NumPy 2.3.5, Pandas 2.3.3, SQLAlchemy 2.1.6.
 - Full local suite before final validation additions: **46 passed**, including eight UI tests.
 - Final isolated core/pipeline suite after additions: **39 passed; 98.03% core coverage**.
@@ -18,7 +21,7 @@
   OPENAI_API_KEY is absent. API credentials are optional; core reporting fully works without them.
 - No tracked secret-pattern findings, local databases or .env files.
 - Local Docker startup blocked by missing WSL. GitHub CI includes Compose build/start/health checks;
-  a configured workflow alone is not proof of passing runtime verification.
+  the successful run above verifies Compose runtime on Ubuntu.
 - Non-failing importlib metadata deprecation warnings occur in Windows UI tests; not suppressed.
 
 ## Measured synthetic detector comparison
