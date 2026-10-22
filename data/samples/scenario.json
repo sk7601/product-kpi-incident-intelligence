@@ -1,0 +1,1 @@
+{"synthetic": true, "seed": 42, "days": 90, "start": "2025-01-01T00:00:00+00:00", "incident_day_start": 60, "incident_day_end_exclusive": 67, "generator": "product.generation.generate"}
