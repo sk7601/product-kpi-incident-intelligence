@@ -1,0 +1,24 @@
+services:
+  db:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_USER: portfolio
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-local-demo-only}
+      POSTGRES_DB: product
+    ports: ["127.0.0.1:5434:5432"]
+    volumes: ["product-data:/var/lib/postgresql/data"]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U portfolio -d product"]
+      interval: 3s
+      timeout: 3s
+      retries: 20
+  app:
+    build: .
+    environment:
+      DATABASE_URL: postgresql+psycopg://portfolio:${POSTGRES_PASSWORD:-local-demo-only}@db:5432/product
+    ports: ["127.0.0.1:8502:8502"]
+    depends_on:
+      db:
+        condition: service_healthy
+volumes:
+  product-data:
